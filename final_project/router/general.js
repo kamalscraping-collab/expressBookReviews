@@ -39,15 +39,21 @@ public_users.get('/',function (req, res) {
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  return res.send(books[req.params.isbn]);
+public_users.get('/isbn/:isbn',async function (req, res) {
+    const isbn = req.params.isbn;
+    const book = await books[isbn];
+    if (book){
+        return res.json(book);
+    } else{
+        return res.send(`Book with ${isbn} not found`);
+    }
 });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
+public_users.get('/author/:author',async function (req, res) {
     for (num in books){
         let book = books[num];
-        author = book['author'];
+        author = await book['author'];
         if (author === req.params.author){
             res.send(book);
         }
@@ -55,11 +61,12 @@ public_users.get('/author/:author',function (req, res) {
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
+public_users.get('/title/:title',async function (req, res) {
+    const book_title = req.params.title;
     for (num in books){
-        let book = books[num];
+        let book = await books[num];
         title = book['title'];
-        if (title === req.params.title){
+        if (title === book_title){
             res.send(book);
         }
     }
